@@ -1,0 +1,24 @@
+version: "2"
+
+services:
+
+  service_workspace:
+    image: rpopuc/workspace:7.2
+    volumes:
+      - ./src:/var/www
+
+  service_app:
+    image: rpopuc/php-nginx:7.2-alpine
+    volumes:
+      - ./src:/var/www
+    ports:
+      - 80:80
+
+  service_db:
+    image: rpopuc/postgres:10
+    volumes:
+      - ./data/service_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
