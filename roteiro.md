@@ -14,6 +14,7 @@
 - [ ] Criação de container de controle de mensagens;
 - [ ] Alteração na API para responder também à fila de mensagens;
 - [ ] Alteração na aplicação para fazer chamadas por mensagens;
+- [ ] Adição de uma API Gateway, em Lumem;
 - [ ] Tornar aplicação uma PWA (Progressive Web Application);
 - [ ] Formatar a aplicação para mobile-first com bootstrap 4;
 - [ ] Alterar a aplicação para ser uma SPA (Single Page Application) com Vue;
