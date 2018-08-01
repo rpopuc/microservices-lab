@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
@@ -16,8 +18,114 @@ class UserController extends Controller
         //
     }
 
+    /**
+     * Obtém a lista dos usuários cadastrados
+     *
+     * @api {get} /user        Obtém lista de usuários registrados
+     * @apiName  GetUsers
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiSuccess {Array} user Lista de usuários
+     */
     public function index()
     {
         return User::all();
+    }
+
+    /**
+     * Armazena as informações de um usuário
+     *
+     * @api {post} /user        Armezana dados de um usuário
+     * @apiName  PostUser
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} name   Nome do usuário.
+     * @apiParam {String} email  Email do usuário.
+     * @apiParam {String} password  Senha do usuário.
+     *
+     * @apiSuccess {Integer} id Identificador do usuário.
+     *
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "name": "John",
+     *       "email": "john@doe.com"
+     *     }
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users'
+        ], [
+            'name.required' => 'Name deve ser preenchido',
+            'email.required' => 'Email deve ser preenchido',
+            'email.unique' => 'Email já cadastrado',
+            'email.email' => 'Email inválido',
+        ]);
+
+        try {
+            $user = new User($request->all());
+            $user->password = $request->get('password');
+            $user->save();
+
+            return response()->json(['id' => $user->id]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'ok' => false,
+                'error' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Obtém as informações de um usuário
+     *
+     * @api {get} /user/:id        Obtém os dados de um usuário
+     * @apiName  GetUser
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {Number} id  Identificador do usuário.
+     *
+     * @apiSuccess {Usuario} usuario  Dados do usuário
+     */
+    public function show(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        if ($user) {
+            return $user;
+        }
+        return response()->json([
+        ], Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * Atualiza as informações de um usuário
+     *
+     * @api {get} /user/:id        Atualiza os dados de um usuário
+     * @apiName  UpdateUser
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {Number} id  Identificador do usuário.
+     *
+     * @apiSuccess {Number} id  Identificador do usuário.
+     */
+    public function update(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        if ($user) {
+            $user->fill($request->all());
+            $user->save();
+            return response()->json([
+                'id' => $user->id,
+                'url' => route('user.update', ['userId' => $user->id])
+            ]);
+        }
+        return response()->json([
+        ], Response::HTTP_NOT_FOUND);
     }
 }
