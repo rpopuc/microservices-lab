@@ -8,6 +8,7 @@
 - [x] Criação de base de dados com migrations;
     - 25/07/2018
 - [ ] Criação de pequena API (crud) para um recurso;
+    - 01/08/2018
 - [ ] Criação de outra composição docker para Aplicação de frontend;
 - [ ] Criação de classe de chamada para API do microserviço;
 - [ ] Chamadas síncronas para resolução da API, na interface;
