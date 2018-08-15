@@ -12,4 +12,8 @@ $router->group(['prefix' => 'v1'], function () use ($router) {
         'as' => 'user.update',
         'uses' => 'UserController@update'
     ]);
+    $router->delete('user/{userId}', [
+        'as' => 'user.delete',
+        'uses' => 'UserController@delete'
+    ]);
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
@@ -70,10 +71,10 @@ class UserController extends Controller
 
         try {
             $user = new User($request->all());
-            $user->password = md5($request->get('password'));
+            $user->password = Hash::make($request->get('password'));
             $user->save();
 
-            return response()->json(['id' => $user->id]);
+            return response()->json(['id' => $user->hash], Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return response()->json([
                 'ok' => false,
@@ -119,6 +120,7 @@ class UserController extends Controller
     public function update(Request $request, $userId)
     {
         $user = User::find($userId);
+        //$user = User::where('hash', $userId)->first();
         if ($user) {
             $user->fill($request->all());
             $user->save();
@@ -129,5 +131,30 @@ class UserController extends Controller
         }
         return response()->json([
         ], Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * Exclui as informações de um determinado usuário
+     *
+     * @api {post} /user        Exclui as informações do usuário
+     * @apiName  DeleteUser
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} id     Identificador do usuário
+    *
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "ok": true,
+     *     }
+     */
+    public function delete(Request $request, $userId)
+    {
+        $user = User::find($userId);
+        if ($user) {
+            $user->delete();
+        }
+        return response()->json(['ok' => true], Response::HTTP_OK);
     }
 }
