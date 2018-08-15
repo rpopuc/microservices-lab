@@ -58,17 +58,19 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required|email|unique:users'
+            'email' => 'required|email|unique:users',
+            'password' => 'required'
         ], [
             'name.required' => 'Name deve ser preenchido',
             'email.required' => 'Email deve ser preenchido',
             'email.unique' => 'Email já cadastrado',
             'email.email' => 'Email inválido',
+            'password.required' => 'Senha deve ser informada',
         ]);
 
         try {
             $user = new User($request->all());
-            $user->password = $request->get('password');
+            $user->password = md5($request->get('password'));
             $user->save();
 
             return response()->json(['id' => $user->id]);
