@@ -1,1 +1,3 @@
-data
+./data
+actions_service/data
+actions_service/src/node_modules

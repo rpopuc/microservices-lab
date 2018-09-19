@@ -22,3 +22,23 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_USER=app
       - POSTGRES_PASSWORD=app
+
+  actions_service_app:
+    image: node:10-alpine
+    volumes:
+      - ./actions_service/src:/var/www
+    tty: true
+    ports:
+      - 80:8080
+    depends_on:
+      - actions_service_database
+
+  actions_service_database:
+    image: mysql:8
+    volumes:
+      - ./actions_service/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=app
